@@ -135,7 +135,7 @@ if( $action =~ /start/i )
 		print "SEND: ".($send/125000)."Mbit | RECV: ".($recv/125000)."Mbit | Total: ".($total/125000)."Mbit\n";
 		print "PPS Send: ".$send_pps." | PPS RECV: ".$recv_pps." | Total: ".$total_pps."\n";
 
-		if( $send >= $send_threshold )
+		if( $send >= $send_threshold*125000 )
 		{
 			my $rate                = $send/125000;
 			my $filename    = time()."-outgoing-".$rate."Mbps.pcap";
@@ -143,7 +143,7 @@ if( $action =~ /start/i )
 			system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
 			print "Finished logging to ".$filename."\n";
 			sleep $timeout_after_attack;
-		} elsif( $recv >= $recv_threshold )
+		} elsif( $recv >= $recv_threshold*125000 )
 		{
 			my $rate                = $recv/125000;
 			my $filename    = time()."-incoming-".$rate."Mbps.pcap";
