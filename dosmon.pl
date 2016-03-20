@@ -43,16 +43,6 @@ if (open(my $fh, '<:encoding(UTF-8)', "/etc/dosmon.conf"))
   die("Could not open configuration file at /etc/dosmon\n");
 }
 
-print "
-Monitoring device ".$device." for denial of service attacks.
-Send threshold is ".$send_threshold."Mbps
-Recieve threshold is ".$recv_threshold."Mbps
-PPS threshold is ".$pps_threshold." packets per second
-Storing tcpdumps in ".$logging_path."
-Sample size is ".$sample_size." packets
-Cool down is ".$timeout_after_attack." seconds
-";
-
 my $daemon = 1;                        # Run as a daemon?
 ## END OF CONFIGURATION - DO NOT EDIT BEYOND THIS POINT!! ##
 my ( $action ) = @ARGV;
@@ -115,6 +105,16 @@ if(!defined $action)
 
 if( $action =~ /start/i )
 {
+
+	print "
+	Monitoring device ".$device." for denial of service attacks.
+	Send threshold is ".$send_threshold."Mbps
+	Recieve threshold is ".$recv_threshold."Mbps
+	PPS threshold is ".$pps_threshold." packets per second
+	Storing tcpdumps in ".$logging_path."
+	Sample size is ".$sample_size." packets
+	Cool down is ".$timeout_after_attack." seconds
+	";
 	if( $daemon > 0 )
 	{
 		daemonize(
