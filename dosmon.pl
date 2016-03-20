@@ -4,6 +4,7 @@ use warnings;
 use Net::Server::Daemonize qw(daemonize);
 
 ## CONFIGURATION ##
+my ($device, $send_threshold, $recv_threshold, $pps_threshold, $logging_path, $sample_size, $timeout_after_attack);
 if (open(my $fh, '<:encoding(UTF-8)', "/etc/dosmon.conf"))
 {
 	while (my $row = <$fh>)
@@ -11,31 +12,31 @@ if (open(my $fh, '<:encoding(UTF-8)', "/etc/dosmon.conf"))
 		chomp($row);
 		if($row =~ /DEVICE="(.*?)";/i)
 		{
-			my $device = $1;
+			$device = $1;
 		}
 		if( $row =~ /SEND_THRESHOLD="(.*?)";/i)
 		{
-			my $send_threshold = $1;
+			$send_threshold = $1;
 		}
 		if( $row =~ /RECV_THRESHOLD="(.*?)";/i)
 		{
-			my $recv_threshold = $1;
+			$recv_threshold = $1;
 		}
 		if( $row =~ /PPS_THRESHOLD="(.*?)";/i)
 		{
-			my $pps_threshold = $1;
+			$pps_threshold = $1;
 		}
 		if( $row =~ /LOG_PATH="(.*?)";/i)
 		{
-			my $logging_path=$1;
+			$logging_path=$1;
 		}
 		if( $row =~ /SAMPLE_SIZE="(.*?)";/i)
 		{
-			my $sample_size=$1;
+			$sample_size=$1;
 		}
 		if( $row =~ /COOL_DOWN="(.*?)";/i)
 		{
-			my $timeout_after_attack=$1;
+			$timeout_after_attack=$1;
 		}
 	}
 } else {
