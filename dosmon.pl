@@ -4,14 +4,55 @@ use warnings;
 use Net::Server::Daemonize qw(daemonize);
 
 ## CONFIGURATION ##
-my $device                                      = 'enp2s0';
-my $send_threshold                              = 25*125000;                # 25 Mbit outgoing.
-my $recv_threshold                              = 25*125000;                # 25 Mbit incoming.
-my $pps_threshold                               = 10000;                    # 10000 packets per second.
-my $logging_path                                = '/var/log/dosmon';        # No trailing /!
-my $sample_size                                 = 100000;                   # How many packets should be logged in a bandwidth attack?
-my $timeout_after_attack						= 120;						# How long (in seconds) to wait, after an attack, before we start monitoring again.
-my $daemon                                      = 1;                        # Run as a daemon?
+if (open(my $fh, '<:encoding(UTF-8)', "/etc/dosmon.conf"))
+{
+	while (my $row = <$fh>)
+	{
+		chomp($row);
+		if($row =~ /DEVICE="(.*?)";/i)
+		{
+			my $device = $1;
+		}
+		if( $row =~ /SEND_THRESHOLD="(.*?)";/i)
+		{
+			my $send_threshold = $1;
+		}
+		if( $row =~ /RECV_THRESHOLD="(.*?)";/i)
+		{
+			my $recv_threshold = $1;
+		}
+		if( $row =~ /PPS_THRESHOLD="(.*?)";/i)
+		{
+			my $pps_threshold = $1;
+		}
+		if( $row =~ /LOG_PATH="(.*?)";/i)
+		{
+			my $logging_path=$1;
+		}
+		if( $row =~ /SAMPLE_SIZE="(.*?)";/i)
+		{
+			my $sample_size=$1;
+		}
+		if( $row =~ /COOL_DOWN="(.*?)";/i)
+		{
+			my $timeout_after_attack=$1;
+		}
+	}
+} else {
+  die("Could not open configuration file at /etc/dosmon\n");
+}
+
+print "
+Monitoring device ".$device." for denial of service attacks.
+Send threshold is ".$send_threshold."Mbps
+Recieve threshold is ".$recv_threshold."Mbps
+PPS threshold is ".$pps_threshold." packets per second
+Storing tcpdumps in ".$logging_path."
+Sample size is ".$sample_size." packets
+Cool down is ".$timeout_after_attack." seconds
+";
+
+my $daemon = 1;                        # Run as a daemon?
 ## END OF CONFIGURATION - DO NOT EDIT BEYOND THIS POINT!! ##
 my ( $action ) = @ARGV;
 sub get_transfer_rate
@@ -98,7 +139,7 @@ if( $action =~ /start/i )
 			my $rate                = $send/125000;
 			my $filename    = time()."-outgoing-".$rate."Mbps.pcap";
 			print "Logging possible outgoing DDoS attack to ".$filename."\n";
-			system('/usr/sbin/tcpdump -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
+			system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
 			print "Finished logging to ".$filename."\n";
 			sleep $timeout_after_attack;
 		} elsif( $recv >= $recv_threshold )
@@ -106,14 +147,14 @@ if( $action =~ /start/i )
 			my $rate                = $recv/125000;
 			my $filename    = time()."-incoming-".$rate."Mbps.pcap";
 			print "Logging possible incoming DDoS attack to ".$filename."\n";
-			system('/usr/sbin/tcpdump -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
+			system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
 			print "Finished logging to ".$filename."\n";
 			sleep $timeout_after_attack;
 		} elsif( $total_pps >= $pps_threshold )
 		{
 			my $filename    = time()."-".$total_pps."pps.pcap";
 			print "Logging possible DoS attack to ".$filename."\n";
-			system('/usr/sbin/tcpdump -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
+			system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
 			print "Finished logging to ".$filename."\n";
 			sleep $timeout_after_attack;
 		}
