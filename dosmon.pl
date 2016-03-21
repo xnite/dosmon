@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use Net::Server::Daemonize qw(daemonize);
+use POSIX qw(strftime);
 
 ## CONFIGURATION ##
 my ($device, $send_threshold, $recv_threshold, $pps_threshold, $logging_path, $sample_size, $timeout_after_attack);
@@ -138,7 +139,7 @@ if( $action =~ /start/i )
 		if( $send >= $send_threshold*125000 )
 		{
 			my $rate                = $send/125000;
-			my $filename    = time()."-outgoing-".$rate."Mbps.pcap";
+			my $filename    = strftime("%F_%H-%M", localtime())."_outgoing-".$rate."Mbps.pcap";
 			print "Logging possible outgoing DDoS attack to ".$filename."\n";
 			system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
 			print "Finished logging to ".$filename."\n";
@@ -146,14 +147,14 @@ if( $action =~ /start/i )
 		} elsif( $recv >= $recv_threshold*125000 )
 		{
 			my $rate                = $recv/125000;
-			my $filename    = time()."-incoming-".$rate."Mbps.pcap";
+			my $filename    = strftime("%F_%H-%M", localtime())."_incoming-".$rate."Mbps.pcap";
 			print "Logging possible incoming DDoS attack to ".$filename."\n";
 			system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
 			print "Finished logging to ".$filename."\n";
 			sleep $timeout_after_attack;
 		} elsif( $total_pps >= $pps_threshold )
 		{
-			my $filename    = time()."-".$total_pps."pps.pcap";
+			my $filename    = strftime("%F_%H-%M", localtime())."_".$total_pps."pps.pcap";
 			print "Logging possible DoS attack to ".$filename."\n";
 			system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
 			print "Finished logging to ".$filename."\n";
