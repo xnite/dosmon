@@ -12,7 +12,7 @@ sub Main
 {
         my @workers = ();
         my @configs = </etc/dosmon/*.conf>;
-        foreach $conf (@configs)
+        foreach my $conf (@configs)
         {
                 push( @workers, threads->create( \&deviceLoop, $conf ) );
         }
