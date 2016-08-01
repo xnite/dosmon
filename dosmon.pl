@@ -32,14 +32,10 @@ sub Main
         #);
         # Wait until all threads finish.
         my @threads = threads->list(threads::running);
-        while(1)
+        while($#threads > 0)
         {
-        	#debug, keep running until stopped
+                my @threads = threads->list(threads::running);
         }
-        #while($#threads > 0)
-        #{
-        #        my @threads = threads->list(threads::running);
-        #}
         print "All threads have shut down\nexiting...";
 }
  
