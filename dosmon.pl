@@ -25,11 +25,11 @@ sub Main
                 }
         } 
         print "Started all threads\n";
-        daemonize(
-                'root',                 # User
-                'root',                 # Group
-                '/var/run/dosmon.pid'   # Path to PID file
-        );
+        #daemonize(
+        #        'root',                 # User
+        #        'root',                 # Group
+        #        '/var/run/dosmon.pid'   # Path to PID file
+        #);
         # Wait until all threads finish.
         my @threads = threads->list(threads::running);
         while($#threads > 0)
