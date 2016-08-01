@@ -18,19 +18,18 @@ sub Main
                 push( @workers, threads->create( \&deviceLoop, $conf ) );
                 sleep 2; # Give time for threads to print before daemonizing
         }
+        foreach ( @workers )
+        {
+                if( $_->is_joinable() ) {
+                        $_->join();
+                }
+        } 
         print "Started all threads\n";
         daemonize(
                 'root',                 # User
                 'root',                 # Group
                 '/var/run/dosmon.pid'   # Path to PID file
         );
-        foreach ( @workers )
-        {
-                #if( $_->is_joinable() ) {
-                        $_->join();
-                #}
-        } 
-
         # Wait until all threads finish.
         my @threads = threads->list(threads::running);
         while($#threads > 0)
