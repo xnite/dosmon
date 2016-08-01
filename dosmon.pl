@@ -14,6 +14,7 @@ sub Main
         my @configs = </etc/dosmon/*.conf>;
         foreach my $conf (@configs)
         {
+        		print "Found config file: ".$conf."\n";
                 push( @workers, threads->create( \&deviceLoop, $conf ) );
         }
         foreach ( @workers )
