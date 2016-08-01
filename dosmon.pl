@@ -204,5 +204,3 @@ if( $action =~ /stop/i )
                 exit;
         }
 }
-
-return 1;
