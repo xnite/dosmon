@@ -17,7 +17,6 @@ sub Main
         		print "Found config file: ".$conf."\n";
                 push( @workers, threads->create( \&deviceLoop, $conf ) );
         }
-        print "Finished opening threads on configured interfaces\n";
         foreach ( @workers )
         {
                 if( $_->is_joinable() ) {
@@ -25,11 +24,11 @@ sub Main
                 }
         } 
         print "Started all threads\n";
-        #daemonize(
-        #        'root',                 # User
-        #        'root',                 # Group
-        #        '/var/run/dosmon.pid'   # Path to PID file
-        #);
+        daemonize(
+                'root',                 # User
+                'root',                 # Group
+                '/var/run/dosmon.pid'   # Path to PID file
+        );
         # Wait until all threads finish.
         my @threads = threads->list(threads::running);
         while($#threads > 0)
@@ -82,7 +81,13 @@ sub deviceLoop
           warn "Could not open configuration file at ".$config_file."! Closing thread.\n";
           threads->exit();
         }
-        print "Started listening on interface ".$device."\n";
+        if ( -e "/sys/class/net/".$device."/address" )
+        { 
+	        print "Started listening on interface ".$device."\n";
+	    } else {
+	    	warn "Could not find device ".$device.". Please make sure that it exists in `ifconfig`\n";
+	    	threads->exit();
+	    }
 
         while( 1 )
         {
@@ -99,7 +104,7 @@ sub deviceLoop
                 if( $send >= $send_threshold*125000 )
                 {
                         my $rate                = $send/125000;
-                        my $filename    = strftime("%F_%H-%M", localtime())."_outgoing-".$rate."Mbps.pcap";
+                        my $filename    = strftime("%F_%H-%M", localtime())."_".$device."-outgoing-".$rate."Mbps.pcap";
                         print "Logging possible outgoing DDoS attack to ".$filename."\n";
                         system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
                         print "Finished logging to ".$filename."\n";
@@ -107,14 +112,14 @@ sub deviceLoop
                 } elsif( $recv >= $recv_threshold*125000 )
                 {
                         my $rate                = $recv/125000;
-                        my $filename    = strftime("%F_%H-%M", localtime())."_incoming-".$rate."Mbps.pcap";
+                        my $filename    = strftime("%F_%H-%M", localtime())."_".$device."-incoming-".$rate."Mbps.pcap";
                         print "Logging possible incoming DDoS attack to ".$filename."\n";
                         system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
                         print "Finished logging to ".$filename."\n";
                         sleep $timeout_after_attack;
                 } elsif( $total_pps >= $pps_threshold )
                 {
-                        my $filename    = strftime("%F_%H-%M", localtime())."_".$total_pps."pps.pcap";
+                        my $filename    = strftime("%F_%H-%M", localtime())."_".$device."-".$total_pps."pps.pcap";
                         print "Logging possible DoS attack to ".$filename."\n";
                         system('/usr/sbin/tcpdump -X -nn -i '.$device.' -s 0 -c '.$sample_size.' -w '.$logging_path."/".$filename);
                         print "Finished logging to ".$filename."\n";
