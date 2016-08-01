@@ -17,6 +17,7 @@ sub Main
         		print "Found config file: ".$conf."\n";
                 push( @workers, threads->create( \&deviceLoop, $conf ) );
         }
+        print "Finished opening threads on configured interfaces\n";
         foreach ( @workers )
         {
                 if( $_->is_joinable() ) {
