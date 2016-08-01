@@ -14,15 +14,15 @@ sub Main
         my @configs = </etc/dosmon/*.conf>;
         foreach my $conf (@configs)
         {
-        		print "Found config file: ".$conf."\n";
+        		#print "Found config file: ".$conf."\n";
                 push( @workers, threads->create( \&deviceLoop, $conf ) );
                 sleep 2; # Give time for threads to print before daemonizing
         }
         foreach ( @workers )
         {
-                if( $_->is_joinable() ) {
+                #if( $_->is_joinable() ) {
                         $_->join();
-                }
+                #}
         } 
         print "Started all threads\n";
         daemonize(
