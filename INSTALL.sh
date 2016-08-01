@@ -1,9 +1,7 @@
 #!/bin/sh
-cp -r dosmon /etc/dosmon
+cp -r dosmon /etc/
 cp dosmon.pl /usr/sbin/dosmon.pl
-cp init/dosmon.sh /etc/init.d/dosmon
 chmod +x /usr/sbin/dosmon.pl
-chmod +x /etc/init.d/dosmon
 mkdir /var/log/dosmon
 echo "Add the following line into crontab for the root user to start dosmon after boot:"
 echo "@reboot /usr/sbin/dosmon.pl start"
