@@ -16,6 +16,7 @@ sub Main
         {
         		print "Found config file: ".$conf."\n";
                 push( @workers, threads->create( \&deviceLoop, $conf ) );
+                sleep 2; # Give time for threads to print before daemonizing
         }
         foreach ( @workers )
         {
