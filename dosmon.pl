@@ -25,11 +25,11 @@ sub Main
                 }
         } 
         print "Started all threads\n";
-        daemonize(
-                'root',                 # User
-                'root',                 # Group
-                '/var/run/dosmon.pid'   # Path to PID file
-        );
+        #daemonize(
+        #        'root',                 # User
+        #        'root',                 # Group
+        #        '/var/run/dosmon.pid'   # Path to PID file
+        #);
         # Wait until all threads finish.
         my @threads = threads->list(threads::running);
         while($#threads > 0)
@@ -100,8 +100,8 @@ sub deviceLoop
                 my $total               = $send+$recv;
 
                 # The following two lines are for debug, these need to be suppressed when not testing
-                #print "[".$device."]\tSEND: ".($send/125000)."Mbit | RECV: ".($recv/125000)."Mbit | Total: ".($total/125000)."Mbit\n";
-                #print "[".$device."]\tPPS Send: ".$send_pps." | PPS RECV: ".$recv_pps." | Total: ".$total_pps."\n";
+                print "[".$device."]\tSEND: ".($send/125000)."Mbit | RECV: ".($recv/125000)."Mbit | Total: ".($total/125000)."Mbit\n";
+                print "[".$device."]\tPPS Send: ".$send_pps." | PPS RECV: ".$recv_pps." | Total: ".$total_pps."\n";
 
                 if( $send >= $send_threshold*125000 )
                 {
