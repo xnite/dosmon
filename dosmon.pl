@@ -20,9 +20,7 @@ sub Main
         }
         foreach ( @workers )
         {
-                if( $_->is_joinable() ) {
-                        $_->join();
-                }
+            $_->detach();
         } 
         print "Started all threads\n";
         daemonize(
