@@ -8,7 +8,7 @@ use threads;
 use Net::Server::Daemonize qw(daemonize);
 use POSIX;
 
-my $DAEMON = 1;
+my $DAEMON;
 my $DEBUG = 1;
 
 sub Main
