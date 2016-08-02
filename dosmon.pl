@@ -36,6 +36,10 @@ sub Main
         	);
     	}
         # Wait until all threads finish.
+        while(1)
+        {
+        	#do nothing but wait to be terminated.
+        }
         my @threads = threads->list(threads::running);
         while($#threads > 0)
         {
