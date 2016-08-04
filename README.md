@@ -3,4 +3,5 @@ A simple network monitoring tool that detects and logs (D)DoS attacks with tcpdu
 
 # Usage
 You can start dosmon with `dosmon.pl start` & stop it by running `dosmon.pl stop`.
-Configuration files are read from /etc/dosmon/*.conf
+
+Configuration files are read from `/etc/dosmon/*.conf`
