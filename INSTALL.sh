@@ -1,5 +1,7 @@
 #!/bin/sh
-cp -r dosmon /etc/
+mkdir /etc/dosmon
+mv /etc/dosmon.conf /etc/dosmon/
+cp ./sample_conf /etc/dosmon/
 cp dosmon.pl /usr/sbin/dosmon.pl
 chmod +x /usr/sbin/dosmon.pl
 mkdir /var/log/dosmon
