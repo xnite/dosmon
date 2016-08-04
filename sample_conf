@@ -1,4 +1,4 @@
-DEVICE="enp2s0";				# Device to monitor traffic on, typically eth0 (Your WAN connection)
+DEVICE="eth0";				    # Device to monitor traffic on, typically eth0 (Your WAN connection)
 SEND_THRESHOLD="25";			# Send rate to start logging in Mbps
 RECV_THRESHOLD="25";			# Recieve rate to start logging in Mbps
 PPS_THRESHOLD="10000";			# Packets per second to start logging.
