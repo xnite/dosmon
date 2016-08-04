@@ -13,6 +13,16 @@ my $DEBUG = 1;
 
 sub Main
 {
+		print "Starting DOSMon\n";
+		# Daemonize before threading or threds will die
+		if( $DAEMON )
+        {
+        	daemonize(
+                	'root',                 # User
+                	'root',                 # Group
+            	    '/var/run/dosmon.pid'   # Path to PID file
+        	);
+    	}
         my @workers = ();
         my @configs = </etc/dosmon/*.conf>;
         foreach my $conf (@configs)
@@ -26,25 +36,17 @@ sub Main
             $_->detach();
         } 
         print "Started all threads\n";
-        
-        if( $DAEMON )
-        {
-        	daemonize(
-                	'root',                 # User
-                	'root',                 # Group
-            	    '/var/run/dosmon.pid'   # Path to PID file
-        	);
-    	}
-        # Wait until all threads finish.
+        # Run in loop until process is killed
         while(1)
         {
         	#do nothing but wait to be terminated.
         }
-        my @threads = threads->list(threads::running);
-        while($#threads > 0)
-        {
-                my @threads = threads->list(threads::running);
-        }
+        # This doesn't seem to work when threads are detached
+        #my @threads = threads->list(threads::running);
+        #while($#threads > 0)
+        #{
+        #        my @threads = threads->list(threads::running);
+        #}
         print "All threads have shut down\nexiting...";
 }
  
