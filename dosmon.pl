@@ -59,6 +59,7 @@ sub deviceLoop
         {
                 while (my $row = <$fh>)
                 {
+			sleep 5;
                         chomp($row);
                         if($row =~ /DEVICE="(.*?)";/i)
                         {
