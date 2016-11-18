@@ -39,6 +39,7 @@ sub Main
         # Run in loop until process is killed
         while(1)
         {
+		sleep 5;
         	#do nothing but wait to be terminated.
         }
         # This doesn't seem to work when threads are detached
